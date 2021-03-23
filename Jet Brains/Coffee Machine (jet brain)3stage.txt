@@ -1,0 +1,103 @@
+package machine;
+import java.util.Scanner;
+public class CoffeeMachine {
+
+    public  static  void printInfo (int Water,int milk,int coffeeBeans,int disCups,int money) {
+
+        System.out.println("The coffee machine has:");
+        System.out.println(Water + " of water");
+        System.out.println(milk + " of milk" );
+        System.out.println(coffeeBeans + " of coffee beans");
+        System.out.println(disCups + " of disposable cups");
+        System.out.println(money + " of money\n");
+    }
+
+    public static void buy(int Water,int milk,int coffeeBeans,int disCups,int money) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappiccino:");
+        int ch = sc.nextInt();
+
+        switch (ch){
+            case 1:
+                Water -= 250;
+                coffeeBeans -= 16;
+                money += 4;
+                disCups--;
+                break;
+
+            case 2:
+                Water -= 350;
+                milk -= 75;
+                coffeeBeans -= 20;
+                money += 7;
+                disCups--;
+
+                break;
+
+            case 3:
+                Water -= 200;
+                milk -= 100;
+                coffeeBeans -= 12;
+                money += 6;
+                disCups--;
+
+                break;
+        }
+        printInfo(Water,milk,coffeeBeans,disCups,money);
+
+    }
+
+    public static void fill(int Water,int milk,int coffeeBeans,int disCups,int money) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("How many ml of water do you want to add:");
+        Water += sc.nextInt();
+        System.out.println("How many ml of milk do you want to add:");
+        milk += sc.nextInt();
+        System.out.println("How many grams of coffee beans  do you want to add:");
+        coffeeBeans += sc.nextInt();
+        System.out.println("How many  disposable cups of coffee do you want to add:");
+        disCups += sc.nextInt();
+
+
+        printInfo(Water,milk,coffeeBeans,disCups,money);
+    }
+
+
+    public static void take(int Water,int milk,int coffeeBeans,int disCups,int money) {
+        System.out.println("I gave you $"+ money);
+        money = 0;
+        System.out.println();
+        printInfo(Water,milk,coffeeBeans,disCups,money);
+    }
+
+
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        int Water = 400;
+        int milk = 540;
+        int coffeeBeans = 120;
+        int disCups = 9;
+        int money = 550;
+
+        String ch;
+
+        printInfo(Water,milk,coffeeBeans,disCups,money);
+
+        System.out.println("Write action (buy, fill, take):");
+        ch = sc.nextLine();
+
+        if (ch.equals("buy")) {
+            buy(Water,milk,coffeeBeans,disCups,money);
+        } else if (ch.equals("fill")) {
+            fill(Water,milk,coffeeBeans,disCups,money);
+
+        } else if (ch.equals("take")) {
+            take(Water,milk,coffeeBeans,disCups,money);
+        }
+
+    }
+}

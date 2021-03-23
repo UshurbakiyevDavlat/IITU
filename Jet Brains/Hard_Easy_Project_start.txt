@@ -1,0 +1,29 @@
+public class Main {
+    public static void main(String[] args) {
+       Scanner sc = new Scanner(System.in);
+       String text = sc.nextLine();
+       String regex = "[.!?]";
+       String [] a = text.split("\\s");
+
+       int ctrS = 0;
+       int ctrW = 0;
+
+        for (String s : a) {
+            if (s.matches(regex)) {
+                ctrS++;
+            } else {
+                ctrW++;
+            }
+        }
+
+        int avI = 0;
+
+        if(ctrS!=0) {
+            avI = ctrW / ctrS;
+        }
+
+       if(avI > 10) System.out.println("HARD");
+       else System.out.println("EASY");
+
+    }
+}
