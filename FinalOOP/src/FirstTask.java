@@ -1,0 +1,40 @@
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class FirstTask {
+    public static void main(String[]args) throws IOException {
+        Scanner sc = new Scanner(System.in);
+
+//        FileWriter fileWriter = new FileWriter("data.txt");
+//        fileWriter.write("admin\n" +
+//                "qwerty");
+        String login;
+        String password;
+
+        System.out.println("Insert login:");
+            login = sc.next();
+        System.out.println("Insert password:");
+            password = sc.next();
+            
+            String[] result = new String[2];
+            Scanner fileCheck = new Scanner(new FileReader("data.txt"));
+
+//            while (fileCheck.hasNextLine()){
+//               if(fileCheck.toString().contains(login)){
+//                   if(fileCheck.toString().contains(password)){
+//                       System.out.println("Login and password are correct.");
+//                   }
+//               }
+//            }
+                int i =0;
+        while(fileCheck.hasNextLine()){
+            result[i] = (Arrays.toString(fileCheck.nextLine().split("/n")));
+            i++;
+        }
+       if(result[0].contains(login)&&result[1].contains(password))System.out.println("Login and password are correct.");
+
+    }
+}

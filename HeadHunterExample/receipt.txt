@@ -1,0 +1,24 @@
+Order{
+id = 0
+,clientId = 0
+,productId = []
+,totalPrice = 0.0
+}
+Order{
+id = 0
+,clientId = 0
+,productId = []
+,totalPrice = 0.0
+}
+Order{
+id = 0
+,clientId = 0
+,productId = []
+,totalPrice = 0.0
+}
+Order{
+id = 0
+,clientId = 0
+,productId = []
+,totalPrice = 0.0
+}
