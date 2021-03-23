@@ -1,0 +1,480 @@
+////////////////////////////Main.java///////////////////////////////
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void task(){
+    int sold = 0;
+
+    Scanner sc = new Scanner(System.in);
+
+        ArrayList<Device> smartPhones = new ArrayList<Device>();
+        smartPhones.add(new SmarthPhone(10000, "Iphone-X", 10, sold,"smartPhones", "Core-i7", 4, 11,5));
+        smartPhones.add(new SmarthPhone(12000, "Iphone-XII", 10, sold,"smartPhones", "Core-i5", 6, 9,6));
+        smartPhones.add(new SmarthPhone(11000, "Iphone-XI", 10, sold, "smartPhones", "Core-i3", 8, 5,8));
+        smartPhones.add(new SmarthPhone(8000, "Iphone-VIII", 10, sold,"smartPhones", "Core-i9", 16, 7,9));
+        smartPhones.add(new SmarthPhone(6000, "Iphone-VI", 10, sold, "smartPhones", "Core-i7", 2, 9,7));
+
+        ArrayList <Device> computers = new ArrayList<Device>();
+
+        computers.add(new Computer(110000, "Hp-Pavilion", 10, sold, "computers", "Core-i5", 4, true,2000));
+        computers.add(new Computer(120000, "Hp-Hyperion", 10, sold, "computers", "Core-i3", 6, false,4000));
+        computers.add(new Computer(100000, "Samsung-Venom", 10, sold, "computers", "Core-i7", 8, true,1000));
+        computers.add(new Computer(90000, "Mac-Air", 10, sold, "computers", "Core-i7", 16, false,5000));
+        computers.add(new Computer(110000, "Asus-legion", 10, sold, "computers", "Core-i9", 32, true,500));
+        computers.add(new Computer(40000, "Aser-Razen", 10, sold, "computers", "Core-i7", 8, true,1500));
+
+
+
+        ArrayList<Device>devices = new ArrayList<Device>();
+        devices.addAll(smartPhones);
+        devices.addAll(computers);
+
+        ArrayList<Device>buyList = new ArrayList<Device>();
+        boolean a = true;
+        while (a) {
+
+            System.out.println("Hello,you can buy some (smarthPhones, computers )here. ");
+            System.out.println("Please,Enter the login (admin or user):");
+            String username = sc.next();
+
+            a = isEnd(username);
+            if(!a)break;
+            System.out.println("Our goods:");
+            view(devices);
+            System.out.println("-------------------------------------------------------------");
+            System.out.println("Wait a second...Checking whether you admin or user ......");
+            System.out.println("-------------------------------------------------------------");
+            boolean check = isAdmin(username);
+
+
+            if (!check) {
+                boolean c = true;
+                System.out.println("-------------------------------------------------------------");
+                System.out.println("Hello,User");
+                System.out.println("-------------------------------------------------------------");
+                System.out.println(" 1- buy product by index" +
+                        " ,2 - filter by type" + " ,3 - sort by price or power " + " ,4 - view solds" + " ,5 - view goods" + ",6 - backToMainMenu");
+
+                while (c) {
+                int d = sc.nextInt();
+                switch (d){
+                    case 1:
+                        System.out.println("Buy a product ,number: ");
+
+                        int ind = sc.nextInt()-1;
+                        buyList.add(devices.get(ind));
+                        Device temp = devices.get(ind);
+                        sold += devices.get(ind).getPrice();
+
+                        int counter = devices.get(ind).getCount()-1;
+                        int counSold = devices.get(ind).getSold()+1;
+
+                        for(Device i:devices) {
+                            if(i == temp) {
+                                devices.get(ind).setCount(counter);
+                                devices.get(ind).setSold(counSold);
+                            }
+                        }
+
+                        System.out.println("\nEnter the next operation");
+                        System.out.println(" 1- buy product by index" +
+                                " ,2 - filter by type" + " ,3 - sort by price or power " + " ,4 - view solds" + " ,5 - view goods" + ",6 - backToMainMenu");
+
+                        break;
+
+                    case 2:
+                        System.out.println("Enter the type for example computers  or smarthones");
+                        String type =sc.next();
+                        for(Device device:devices){
+                            if (device.getType().equals(type)){
+                                device.showDetails();
+                            }
+                        }
+                        System.out.println("\nEnter the next operation :");
+                        System.out.println(" 1- buy product by index" +
+                                " ,2 - filter by type" + " ,3 - sort by price or power " + " ,4 - view solds" + " ,5 - view goods" + ",6 - backToMainMenu");
+                        break;
+                    case 3:
+
+                        System.out.println("Sorting by price or power :");
+                        String ch = sc.next();
+                        switch (ch) {
+                            case "price":
+                                System.out.println("Sorting by price:");
+                                sortPrice(devices);
+                                break;
+                            case "power":
+                                System.out.println("Sorting by power:");
+                                sortPower(devices);
+                                break;
+                        }
+
+                        view(devices);
+
+                        System.out.println("\nEnter the next operation :");
+                        System.out.println(" 1- buy product by index" +
+                                " ,2 - filter by type" + " ,3 - sort by price or power " + " ,4 - view solds" + " ,5 - view goods" + ",6 - backToMainMenu");
+                        break;
+                    case 4:
+                        view(buyList);
+                        System.out.println("\nEnter the next operation:");
+                        System.out.println(" 1- buy product by index" +
+                                " ,2 - filter by type" + " ,3 - sort by price or power " + " ,4 - view solds" + " ,5 - view goods" + ",6 - backToMainMenu");
+
+                        break;
+
+                    case 5:
+                        view(devices);
+                        System.out.println("\nEnter the next operation");
+                        System.out.println(" 1- buy product by index" +
+                                " ,2 - filter by type" + " ,3 - sort by price or power " + " ,4 - view solds" + " ,5 - view goods" + ",6 - backToMainMenu");
+                        break;
+
+                    case 6:
+                    c = false;
+                        break;
+                    }
+                }
+
+            }   else {
+                boolean c = true;
+                System.out.println("-------------------------------------------------------------");
+                System.out.println("Hello,Admin");
+                System.out.println("-------------------------------------------------------------");
+                System.out.println("1-add product, 2-suplement , 3-delete product by index ,4 - IncomeShow , 5 - backToMainMenu");
+                while (c) {
+                    int ch = sc.nextInt();
+                    switch (ch) {
+                        case 1:
+                            System.out.println("Enter what type for  computers or smartPhones");
+                            String chz = sc.next();
+//20000 Prime 20   Core-i5 8 40 7
+                            if (chz.equals("smartPhones")) {
+                                System.out.println("double price, String model, int count, String cpu, int ram, double mgpx, int generation");
+                                devices.add(new SmarthPhone(sc.nextDouble(),sc.next(),sc.nextInt(), sold,"smartPhones", sc.next(), sc.nextInt(), sc.nextDouble(), sc.nextInt()));
+                                view(devices);
+
+
+                            }  else if (chz.equals("computers")) {
+                                System.out.println("double price, String model, int count, String cpu, int ram, boolean ssd, int memory");
+                                devices.add(new Computer(sc.nextInt(), sc.next(), sc.nextInt(), sold, "computers", sc.next(), sc.nextInt(), sc.nextBoolean(), sc.nextInt()));
+                                view(devices);
+
+                            } else {
+                                System.out.println("Type is not existing");
+                            }
+                            view(devices);
+                            System.out.println("Enter next operation:");
+                            System.out.println("1-add product, 2-suplement , 3-delete product by index ,4 - IncomeShow , 5 - backToMainMenu");
+                            break;
+
+                        case 2:
+                            view(devices);
+                            System.out.println("Enter what device  you want to suply:");
+                            int indCount = sc.nextInt()-1;
+                            System.out.println("Enter how many products do you want to add:");
+                            int ctr = sc.nextInt();
+
+                           Device temp = devices.get(indCount);
+                           ctr += devices.get(indCount).getCount();
+
+                            for(Device i : devices){
+                                if (i==temp) {
+                                    i.setCount(ctr);
+                                }
+                            }
+                            view(devices);
+                            System.out.println("Enter the next operation");
+                            System.out.println("1 - add product, 2 - suplement , 3-delete product by index ,4 - IncomeShow , 5 - backToMainMenu");
+                            break;
+                        case 3:
+                            System.out.println("Enter the index of the product:");
+                            int ind = sc.nextInt()-1;
+                            devices.remove(ind);
+                            view(devices);
+
+                            System.out.println("Product deleted");
+
+                            System.out.println("Enter the next opertation:");
+                            System.out.println("1 - add product, 2 - suplement , 3 - delete product by index ,4 - IncomeShow , 5 - backToMainMenu");
+
+                            break;
+                        case 4:
+                            System.out.println("Total is " + sold);
+                            System.out.println("Enter the next operation:");
+                            System.out.println("1 - add product, 2 - suplement , 3 - delete product by index ,4 - IncomeShow , 5 - backToMainMenu");
+                            break;
+                        case 5:
+                            System.out.println("You unlogined...");
+                            c=false;
+                            break;
+                    }
+                }
+            }
+        }
+    }
+    public  static  boolean isEnd(String username){
+        if(username.equals("exit"))return false;
+        else return  true;
+
+    }
+    public static boolean isAdmin(String username){
+        return username.equals("admin");
+    }
+    public  static void view (ArrayList<Device>devices){
+        int count1 = 1;
+        for (Device device:devices){
+            System.out.println(count1++ + " ");
+            device.showDetails();
+        }
+    }
+    public static void sortPrice (ArrayList<Device>devices){
+        devices.sort(Comparator.comparing(Device::getPrice));
+        for(Device device:devices){
+            device.showDetails();
+        }
+    }
+
+    public static  void sortPower (ArrayList<Device>devices){
+        devices.sort(Comparator.comparing(Device::basePerformance));
+    }
+
+
+    public static void main(String[]args){
+        task();
+    }
+}
+
+////////////////////////////Good.java///////////////////////////////////////////////
+public abstract class Good {
+    private  double price;
+    private  String model;
+    private  int count;
+    private int sold;
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getSold() {
+        return sold;
+    }
+
+    public void setSold(int sold) {
+        this.sold = sold;
+    }
+
+    abstract  void showDetails();
+
+
+    public Good(double price, String model, int count, int sold) {
+        this.price = price;
+        this.model = model;
+        this.count = count;
+        this.sold = sold;
+    }
+
+    public Good() {
+
+    }
+
+
+}
+///////////////////////////////////////Device.java////////////////////////////////////
+
+public abstract class Device extends Good {
+
+    private String type;
+    private String cpu;
+    private int ram;
+
+    public String getType() {
+        return type;
+    }
+
+    public Device(double price, String model, int count, int sold, String type, String cpu, int ram) {
+        super(price, model, count, sold);
+        this.type = type;
+        this.cpu = cpu;
+        this.ram = ram;
+    }
+
+    public Device(String type, String cpu, int ram) {
+        this.type = type;
+        this.cpu = cpu;
+        this.ram = ram;
+    }
+
+    public Device() {
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCpu() {
+        return cpu;
+    }
+
+    public void setCpu(String cpu) {
+        this.cpu = cpu;
+    }
+
+    public int getRam() {
+        return ram;
+    }
+
+    public void setRam(int ram) {
+        this.ram = ram;
+    }
+
+    double basePerformance(){
+       switch (this.cpu){
+           case "Core-i3":
+                return 1.3 * getRam();
+
+           case "Core-i5":
+               return  1.7 * getRam();
+
+           case "Core-i7":
+                 return  2.1 *getRam();
+
+        case "Core-i9":
+            return 2.5 * getRam();
+        }
+       return  0;
+
+   }
+    @Override
+    void showDetails() {
+            System.out.println("Price:" + getPrice() + " Model:" + getModel() + " Count = " + getCount() + " Sold:" + getSold()
+                    + " Type " + getType() + " CPU" + getCpu() + " RAM " + getRam() + " ");
+
+    }
+
+    abstract double getPerformance();
+
+
+
+
+
+}
+///////////////////////////////////////SmartPhone.java///////////////////////////////////////////
+public  class SmarthPhone extends Device {
+
+    private double mgpx;
+    private int generation;
+
+    public SmarthPhone(double price, String model, int count, int sold, String type, String cpu, int ram, double mgpx, int generation) {
+        super(price, model, count, sold, type, cpu, ram);
+        this.mgpx = mgpx;
+        this.generation = generation;
+    }
+
+
+
+    public double getMgpx() {
+        return mgpx;
+    }
+
+    public void setMgpx(double mgpx) {
+        this.mgpx = mgpx;
+    }
+
+    public int getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(int generation) {
+        this.generation = generation;
+    }
+
+    @Override
+    double getPerformance() {
+        return basePerformance() + (generation*mgpx);
+    }
+
+    @Override
+    void showDetails() {
+        System.out.println("Price:" + getPrice() + " Model:" + getModel() + " Count = " + getCount() + " Sold:" + getSold()
+                + " Type " + getType() + " CPU " + getCpu() + " RAM " + getRam() + " Mgpx:" + getMgpx() +  " Generation:" + getGeneration());
+    }
+}
+////////////////////////////////////Computer.java////////////////////////
+public  class Computer extends Device {
+
+    private boolean ssd;
+    private int memory;
+
+    public Computer(double price, String model, int count, int sold, String type, String cpu, int ram, boolean ssd, int memory) {
+        super(price, model, count, sold, type, cpu, ram);
+        this.ssd = ssd;
+        this.memory = memory;
+    }
+
+    public boolean isSsd() {
+        return ssd;
+    }
+
+    public void setSsd(boolean ssd) {
+        this.ssd = ssd;
+    }
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public void setMemory(int memory) {
+        this.memory = memory;
+    }
+
+    @Override
+    double basePerformance() {
+        return super.basePerformance();
+    }
+
+    @Override
+    double getPerformance() {
+        if(isSsd()){
+            return  basePerformance()*1.5;
+        }
+        else {
+            return basePerformance();
+        }
+    }
+
+    @Override
+    void showDetails() {
+        System.out.println("Price:" + getPrice() + " Model:" + getModel() + " Count = " + getCount() + " Sold:" + getSold()
+                + " Type " + getType() + " CPU" + getCpu() + " RAM " + getRam() + " Memory: " + getMemory());
+    }
+
+
+}
+///////////////////////////////////END,thank you for attention!//////////////////////////////////////////////////////////
+
+
+

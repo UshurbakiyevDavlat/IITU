@@ -1,0 +1,208 @@
+
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Server {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Book> userList = Request.getUserList();
+        try {
+            while (true) {
+                ServerSocket serverSocket = new ServerSocket(80);
+                System.out.println("Server is alive!!!!!");
+                Socket socket = serverSocket.accept();
+
+                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+                System.out.println((String) input.readObject() + " connected");
+
+                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+
+                Message message;
+                while (!(message = (Message) input.readObject()).getText().equalsIgnoreCase("0")) {
+
+                    if (Request.getOperationType().equalsIgnoreCase("LIST_BOOKS")) {
+                        output.writeObject("Hi");
+                    } else if(Request.getOperationType().equalsIgnoreCase("ADD_BOOK")){
+                        userList.add(new Book(sc.nextInt(), sc.next(), sc.next()));
+                        Request.saveUserList(userList);
+                    }
+
+                }
+                System.out.println((String)input.readObject() + " leave chat");
+                socket.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+ class Request implements  Serializable{
+    private static final String path = "C:\\Users\\dushu\\IdeaProjects\\TreadsClass\\src\\";
+    private static String operationType;
+    private ArrayList<Book> books;
+
+
+    public Request(String operationType, ArrayList<Book> books) {
+        Request.operationType = operationType;
+        this.books = books;
+    }
+    public static String getOperationType(){
+        return  operationType;
+    }
+    public ArrayList<Book> getBooks(){
+        return books;
+    }
+     public static ArrayList<Book> getUserList(){
+         ArrayList<Book> resultUserList = new ArrayList<>();
+         String line;
+         try {
+             BufferedReader reader = new BufferedReader(new FileReader(path+"listBooks.txt"));
+             while((line = reader.readLine())!=null){
+                 resultUserList.add(Book.fromString(line));
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return resultUserList;
+     }
+     public static void saveUserList(ArrayList<Book> userArrayList){
+         try{
+             FileWriter writer = new FileWriter(path+"listBooks.txt");
+             for (Book user:userArrayList){
+                 writer.write(user.toString()+"\n");
+             }
+             writer.close();
+         }catch(Exception e){
+             e.printStackTrace();
+         }
+     }
+}
+class Message implements Serializable{
+    private String name;
+    private String text;
+
+    public Message(String name, String text) {
+        this.name = name;
+        this.text = text;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public String getText() {
+        return text;
+    }
+}
+/////client.java
+
+
+import java.io.*;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Client {
+    private static final String name = "@Davlat";
+
+
+
+
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        try {
+            Socket socket = new Socket("localhost", 80);
+
+            ObjectOutputStream request = new ObjectOutputStream(socket.getOutputStream());
+            request.writeObject(name);
+
+            ObjectInputStream response = new ObjectInputStream(socket.getInputStream());
+            String text;
+            String line;
+
+            System.out.println("PRESS 1 TO LIST BOOKS\n" +
+                    "PRESS 2 TO ADD BOOKS\n" +
+                    "PRESS 0 TO DISCONNECT FROM SERVER");
+
+            while (!(text = sc.next()).equalsIgnoreCase("0")){
+
+                request.writeObject(new Message(name,text));
+
+                if(text.equalsIgnoreCase("1")) {
+                    System.out.println("List Books");
+                    Request req = new Request("LIST_BOOKS", null);
+
+                } else if (text.equalsIgnoreCase("2")){
+                    System.out.println("Add Books");
+                    Request req = new Request("ADD_BOOK", null);
+                }
+                System.out.println("PRESS 1 TO LIST BOOKS\n" +
+                        "PRESS 2 TO ADD BOOKS\n" +
+                        "PRESS 0 TO DISCONNECT FROM SERVER");
+
+
+                if ((line = (String)response.readObject())!=null)
+               System.out.println("Server send you a list of books: "+line);
+            }
+
+
+            request.writeObject(name);
+            request.close();
+            socket.close();
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+///book.java
+public class Book {
+    private int id;
+    private  String name;
+    private  String author;
+
+    public Book(int id, String name, String author) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public static Book fromString(String line){
+        String [] lineArray = line.split(" ");
+        return new Book(Integer.parseInt(lineArray[0]),lineArray[1],lineArray[2]);
+    }
+
+}

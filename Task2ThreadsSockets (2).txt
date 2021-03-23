@@ -1,0 +1,169 @@
+/////////////////////////////////Client
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Client {
+    public Client() {
+    }
+
+    private static final String name = "@Davlat";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            Socket socket = new Socket("127.0.0.1", 8080);
+
+            ThreadOfListner listner = new ThreadOfListner(socket);
+            ThreadOfSpeaker speaker = new ThreadOfSpeaker(socket,name);
+
+            String text;
+            String line;
+
+            listner.start();
+            speaker.start();
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+/////////////////Message
+
+import java.io.Serializable;
+
+public class Message implements Serializable {
+    private String name;
+    private String text;
+
+    public Message(String name, String text) {
+        this.name = name;
+        this.text = text;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+}
+
+
+//////Server
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Server {
+
+    public static void main(String[] args) {
+        Scanner scanner =new Scanner(System.in);
+        try {
+            while (true) {
+                ServerSocket serverSocket = new ServerSocket(8080);
+                System.out.println("Server is alive!!!!!");
+                Socket socket = serverSocket.accept();
+
+
+                ThreadOfListner listner = new ThreadOfListner(socket);
+                ThreadOfSpeaker speaker = new ThreadOfSpeaker(socket,"Server");
+
+                listner.start();
+                speaker.start();
+
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+public class ThreadOfListner extends  Thread {
+    private Socket socket;
+    public  ThreadOfListner(Socket socket){
+        this.socket = socket;
+    }
+
+    @Override
+    public void run() {
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+
+            System.out.println(input.readObject() + " connected");
+
+            Message request;
+            while (!(request = (Message) input.readObject()).getText().equalsIgnoreCase("exit") ) {
+                System.out.println(request.getName() + ": " + request.getText());
+            }
+            input.close();
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+/////////////
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class ThreadOfSpeaker extends  Thread {
+    private Socket socket;
+    private  String name;
+    public ThreadOfSpeaker(Socket socket,String name) {
+        this.socket = socket;
+        this.name = name;
+    }
+
+    @Override
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            output.writeObject(name);
+            Message request;
+            String text;
+            while (!(text = scanner.next()).equalsIgnoreCase("exit") ) {
+               output.writeObject(new Message(name,text));
+            }
+            output.close();
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+

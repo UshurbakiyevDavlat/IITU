@@ -1,0 +1,207 @@
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class Main {
+
+    public static  void Uni() {
+        Scanner sc = new Scanner(System.in);
+
+        ArrayList<Subject> subs = new ArrayList<>();
+       /* ArrayList<Subject> subjectsSecond = new ArrayList<>();
+        ArrayList<Subject> subjectsThird = new ArrayList<>();
+        ArrayList<Subject> subjectsFourth = new ArrayList<>();
+*/
+
+
+
+        /*subs.add(new Subject("C++", 1));
+        subs.add(new Subject("Sociology", 1));
+        subs.add(new Subject("Philosophy", 1));
+        subs.add(new Subject("DiscreteMath", 1));
+        subs.add(new Subject("ProgrammingBasics ", 1));
+
+        subs.add(new Subject("OOP", 2));
+        subs.add(new Subject("DataBase", 2));
+        subs.add(new Subject("Architecture", 2));
+        subs.add(new Subject("Web", 2));
+        subs.add(new Subject("MagicTheory ", 2));
+
+        subs.add(new Subject("Cryphtography", 3));
+        subs.add(new Subject("UX/UI", 3));
+        subs.add(new Subject("MachineLearning", 3));
+        subs.add(new Subject("ApplicationDevelopment ", 3));
+        subs.add(new Subject("OperationalSystem ", 3));
+
+        subs.add(new Subject("StandartDeviation ", 4));
+        subs.add(new Subject("BlockChain ", 4));
+        subs.add(new Subject("BigData", 4));
+        subs.add(new Subject("ProjectManagement", 4));
+        */
+
+        for(int i = 0;i<19;i++){
+            subs.add(new Subject(sc.next(),sc.nextInt()));
+        }
+
+
+        ArrayList<Student> STUD = new ArrayList<>();
+
+        /*STUD.add(new Student(17023, "Nurzhan", 1, new ArrayList<Subject>()));
+        STUD.add(new Student(18095, "Michle ", 3, new ArrayList<Subject>()));
+        STUD.add(new Student(14567, "Jenny ", 1, new ArrayList<Subject>()));
+        STUD.add(new Student(19086, "Korun ", 4, new ArrayList<Subject>()));
+        STUD.add(new Student(20908, "Kenny", 4, new ArrayList<Subject>()));
+        STUD.add(new Student(19504, "Bekzhan ", 2, new ArrayList<Subject>()));
+        STUD.add(new Student(18904, "Valentino ", 1, new ArrayList<Subject>()));
+        STUD.add(new Student(18234, "Morris ", 2, new ArrayList<Subject>()));
+        STUD.add(new Student(17098, "Kato ", 3, new ArrayList<Subject>()));
+        STUD.add(new Student(16094, "Hirokava ", 3, new ArrayList<Subject>()));
+        STUD.add(new Student(17904, "Wendy ", 2, new ArrayList<Subject>()));
+        STUD.add(new Student(16049, "Samir ", 4, new ArrayList<Subject>()));
+        STUD.add(new Student(19343, "Lyudmilla ", 4, new ArrayList<Subject>()));
+        STUD.add(new Student(20025, "Ayan ", 1, new ArrayList<Subject>()));
+        */
+
+        for(int i =0;i<14;i++){
+            STUD.add(new Student(sc.nextInt(),sc.next(),sc.nextInt(),new ArrayList<Subject>()));
+        }
+
+        ArrayList<Subject>sub1 = new ArrayList<Subject>();
+        ArrayList<Subject>sub2 = new ArrayList<Subject>();
+        ArrayList<Subject>sub3 = new ArrayList<Subject>();
+        ArrayList<Subject>sub4 = new ArrayList<Subject>();
+
+
+        for (Student s : STUD) {
+
+            if(s.getCourse() == 1) {
+                for(Subject c : subs ) {
+                    if(c.getCourse() == 1) {
+                        sub1.add(c);
+
+                    }
+                } s.addSubjects(sub1);
+
+
+            }
+
+             if(s.getCourse() == 2) {
+                for(Subject d : subs ) {
+                    if(d.getCourse() == 2) {
+                        sub2.add(d);
+                    }
+                }  s.addSubjects(sub2);
+            }
+             if(s.getCourse() == 3) {
+                for(Subject r : subs ) {
+                    if(r.getCourse() == 3) {
+                        sub3.add(r);
+                    }
+                }
+                s.addSubjects(sub3);
+
+            }
+             if(s.getCourse() == 4) {
+                for(Subject z : subs ) {
+                    if(z.getCourse() == 4) {
+                        sub4.add(z);
+                    }
+                }
+                s.addSubjects(sub4);
+
+            }
+
+        }
+
+         STUD.sort(Comparator.comparing(Student::getName));
+
+        for (Student i : STUD) {
+            i.printData();
+        }
+
+    }
+
+
+    public static void main (String[]args){
+        Uni();
+    }
+}
+
+///////////////////
+public class Subject {
+    private String title;
+    private int course;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getCourse() {
+        return course;
+    }
+
+    public Subject(String title, int course) {
+        this.title = title;
+        this.course = course;
+    }
+    @Override
+    public String toString() {
+        return  "Title='" + title;
+    }
+
+
+}
+////////////////////////
+public abstract class UniversityMember {
+
+    private int id;
+    private String name;
+    abstract void printData();
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public UniversityMember(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+}
+////////////////////////
+import java.util.List;
+
+public class Student extends UniversityMember{
+    private int course;
+    private List<Subject>subjects;
+
+    public int getCourse() {
+        return course;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public Student(int id, String name, int course, List<Subject> subjects) {
+        super(id, name);
+        this.course = course;
+        this.subjects = subjects;
+    }
+    void addSubjects(List<Subject>subjects){
+        this.subjects = subjects;
+    }
+
+    @Override
+    void printData() {
+        System.out.println("Student name:" + getName() + " " + "course=" + course + "\n" + "Subjects:");
+        for (Subject i : subjects) {
+            System.out.println(i);
+        }
+    }
+}

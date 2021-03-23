@@ -1,0 +1,164 @@
+package sample;
+import java.awt.desktop.SystemSleepEvent;
+import java.util.Scanner;
+import java.util.Random;
+public  class New {
+    static Scanner cin = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int row;
+        //First();
+        //Second();
+        // Third();
+        // Fourth();
+        //  Fifth();
+        // Sixth();
+        //Seventh();
+        /// Eighth();
+        //Nineth();
+        Tenth();
+    }
+
+    static void First() {
+        int I = 0;
+        int a = cin.nextInt();
+        int b = cin.nextInt();
+        I = a + b;
+        System.out.println("Answer for the first task is " + I);
+    }
+
+    static void Second() {
+        String uni = cin.next();
+        String fac = cin.next();
+        String sub = cin.next();
+
+        System.out.println("University:" + uni);
+        System.out.println("Faculty:" + fac);
+        System.out.println("Subject:" + sub);
+    }
+
+    static void Third() {
+        double a = cin.nextDouble(), b = cin.nextDouble();
+        if (a > b) System.out.println(a + " is greater than " + b);
+        else if (a < b) System.out.println(b + " is greater than " + a);
+        else System.out.println("Two numbers are equal");
+    }
+
+    static void Fourth() {
+        int[] a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+        for (int i = 9; i > 0; i--) {
+            System.out.println(a[i]);
+        }
+    }
+
+    static void Fifth() {
+        String pass = "HelloJavaAgain";
+        String pass_user = cin.next();
+        if (pass.equals(pass_user)) {
+            System.out.println("Succes");
+        } else System.out.println("Incorrect,please try again");
+    }
+
+    static void Sixth() {
+        for (int i = 0; i < 100; i++) {
+            if (i % 2 != 0) System.out.println(i);
+        }
+    }
+
+    static void Seventh() {
+        int n = cin.nextInt();
+        int fac = 1;
+        for (int i = 1; i <= n; i++) {
+            fac = 1;
+            for (int j = 1; j <= i; j++) {
+                fac *= j;
+            }
+        }
+        System.out.println(fac);
+    }
+
+    static void Eighth() {
+        int n = cin.nextInt();
+        int sum = 0;
+        int[] a = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31};
+        for (int i = 0; i < n; i++) {
+            sum += a[i];
+        }
+        System.out.println(sum);
+    }
+
+    static void Nineth() {
+        int n = cin.nextInt();
+        double sum = 0.0;
+        double k = 2.0;
+
+
+        for (int i = 1; i <= n; i++) {
+            if (i % 2 == 0)
+                sum -=  (1.0 / (k * i));
+            else sum = sum + (1.0 / (k * i));
+
+        }
+        System.out.println(sum);
+    }
+
+    static void fib(){
+        int ctr=20;
+        int i=0;
+        int fib,num1=0,num2=1;
+        int []fib_arr=new int[21];
+        while(ctr>=0){
+
+            fib=num1+num2;
+            num1=num2;
+            num2=fib;
+            System.out.print(fib+" ");
+            ctr--;
+        }
+    }
+    static void secArr(){
+        int row=8;
+        int col=5;
+        int [][]arr=new int[row][col];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++) {
+                arr[i][j] += (10+Math.random()*99);
+            }
+        }
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                System.out.print(arr[i][j]+" ");
+            }
+            System.out.println();
+        }
+    }
+    static void arrod(){
+        int []arr=new int[100];
+        int ctr=0;
+        for(int i=0;i<100;i++,ctr++) {
+            if (i % 2 == 1) {
+                arr[ctr] = i;
+                System.out.print(arr[ctr]+" ");
+            }
+        }
+    }
+    static void Tenth(){
+        System.out.println("Press 1 to create an array of odd numbers");
+        System.out.println("Press 2 to create an array of Fibonacci numbers");
+        System.out.println("Press 3 to create an 2d array");
+        System.out.println("Press 4 to exit from the programm\n");
+
+        int n=cin.nextInt();
+
+        switch (n){
+            case 1:arrod();
+                break;
+            case 2:fib();
+            break;
+            case 3:secArr();
+            break;
+            case 4:return;
+        }
+    }
+
+}

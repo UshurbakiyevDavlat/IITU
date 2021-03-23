@@ -1,0 +1,317 @@
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Server {
+
+    public static void main(String[] args) {
+        Scanner sc =  new Scanner(System.in);
+        try {
+            ServerSocket serverSocket = new ServerSocket(9090);
+            System.out.println("Server is on!");
+
+            while (true){
+                Socket socket = serverSocket.accept();
+                System.out.println("Connected!");
+                    ServerThread serverThread = new ServerThread(socket);
+                    serverThread.start();
+
+
+            }
+
+
+        } catch (IOException exc) {
+            System.out.println("Server exc " + exc);
+        }
+    }
+}
+
+///////////////////////Client
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Client {
+
+    public static void main(String[]args)  {
+        Scanner sc = new Scanner(System.in);
+
+        try(
+
+                Socket socket = new Socket("localhost",9090);
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+
+
+        ){
+
+            boolean ch = true;
+
+
+            ArrayList<Book> books = new ArrayList<>();
+            Book book = null;
+
+            while (ch){
+                System.out.println("Press 1 to List books:\n"+
+                        "Press 2 to Add books:\n" +
+                        "Press 3 to exit:"
+                        );
+                int choice = sc.nextInt();
+
+                    switch (choice){
+                        case 1:
+                            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                           PackageData pc = new PackageData("LIST_BOOKS",books);
+                                out.writeObject(pc);
+                            PackageData pd3 = (PackageData)in.readObject();
+                            ArrayList<Book> arr = pd3.getBooks();
+                            for (Book o :arr) {
+                                System.out.println(o);
+                            }
+                            break;
+                        case 2:
+                            System.out.println("id,String title, String author, int price: ");
+
+                                int id = sc.nextInt();
+                                String title = sc.next();
+                                String author = sc.next();
+                                int price  = sc.nextInt();
+
+                                    Book book1 = new Book(id,title,author,price);
+                                PackageData pc1 = new PackageData("ADD_BOOKS", book1);
+                                out.writeObject(pc1);
+
+                            break;
+                        case 3 :
+                                ch = false;
+                            break;
+
+                        default:
+                            System.out.println("Incorrect input");
+                            break;
+                    }
+            }
+
+        } catch (Exception exc){
+            System.out.println("Client exc " + exc);
+        }
+    }
+}
+
+////////////////ServerThread
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import static java.sql.DriverManager.getConnection;
+
+public class ServerThread  extends  Thread{
+            private Socket socket;
+            public static final Scanner sc = new Scanner(System.in);
+
+            public ServerThread(){
+
+            }
+
+            public  ServerThread(Socket socket){
+                this.socket = socket;
+            }
+
+    @Override
+    public void run() {
+        sqlManageOperator books1 = new sqlManageOperator();
+        books1.connect();
+
+
+        try (
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                ){
+
+                PackageData pc = null;
+
+            System.out.println("Connected!");
+
+                while ((pc = (PackageData)in.readObject())!= null){
+
+                    if(pc.getOperationType().equalsIgnoreCase("LIST_BOOKS")){
+                        ArrayList<Book>books =  books1.list();
+                        PackageData clientData = new PackageData(books);
+                        out.writeObject(clientData);
+
+                    } else  if(pc.getOperationType().equalsIgnoreCase("ADD_BOOKS")){
+                            Book book = pc.getBook();
+                            books1.add(book);
+                    }
+
+                }
+
+
+            } catch (Exception exc) {
+                System.out.println("Thread exc" + exc);
+        }
+    }
+
+}
+
+//////////////////////////////PackageData
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class PackageData implements Serializable {
+    private String operationType;
+    private ArrayList<Book>books;
+    protected Book book;
+
+    public  PackageData(){
+
+    }
+
+    public PackageData(String operationType, ArrayList<Book> books) {
+        this.operationType = operationType;
+        this.books = books;
+
+    }
+
+    public  PackageData(String operationType, Book book){
+        this.operationType = operationType;
+        this.book = book;
+    }
+    public  PackageData(ArrayList<Book>books){
+        this.books = books;
+    }
+    public String getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(String operationType) {
+        this.operationType = operationType;
+    }
+
+    public ArrayList<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(ArrayList<Book> books) {
+        this.books = books;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setStudent(Book book) {
+        this.book = book;
+    }
+
+}
+
+///////////////////sqlManagerOperator
+
+
+import java.sql.*;
+import java.util.ArrayList;
+
+public class sqlManageOperator {
+    private static Connection connection;
+    private static String url = "jdbc:postgresql://localhost:64805/BookStore";
+    private static String user = "postgres";
+    private static String pass = "dada2000";
+
+    public void connect(){
+        try {
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(url, user, pass);
+            System.out.println("Here");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  void add(Book book) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO bookstore (book_id, title, author,price) VALUES (?, ?, ?, ?);");
+        statement.setInt(1, (int) book.getId());
+        statement.setString(2, book.getTitle());
+        statement.setString(3, book.getAuthor());
+        statement.setInt(4,  book.getPrice());
+        statement.executeUpdate();
+        statement.close();
+    };
+
+    public ArrayList<Book> list() throws SQLException {
+        ArrayList<Book> books = new ArrayList<>();
+        PreparedStatement list = connection.prepareStatement("SELECT * FROM bookstore");
+        ResultSet rs = list.executeQuery();
+        while (rs.next()){
+            long id = rs.getInt("id");
+            String title = rs.getString("title");
+            String author = rs.getString("author");
+            int price = rs.getInt("price");
+            books.add(new Book(id,title,author,price));
+
+        }
+        list.close();
+        return books;
+    }
+}
+////////////////Book
+import java.io.Serializable;
+
+public class Book  implements Serializable {
+   private long id;
+   private String title;
+   private String author;
+   private int price;
+
+   public Book(){
+
+   }
+    public Book(long id, String title, String author, int price) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.price = price;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+}
+
+////////////////////////////end

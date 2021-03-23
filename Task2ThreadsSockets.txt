@@ -1,0 +1,190 @@
+public class Horse extends Thread{
+    String name;
+    int distance;
+    int speed;
+    double slowDown;
+    public  Horse(String name,int distance,int speed,double slowDown){
+        this.name = name;
+        this.distance = distance;
+        this.speed = speed;
+        this.slowDown = slowDown;
+    }
+
+    public String getname(){
+        return name;
+    }
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+    public  int getTime(){
+        return getDistance()/getSpeed();
+    }
+
+    @Override
+    public void run() {
+        int currentPosition = 0;
+        int ctr=0;
+        try {
+            while(currentPosition<distance){
+                if(ctr == 5){
+                    if(slowDown !=0) {
+                        speed *= slowDown;
+                    } else {
+                        speed +=slowDown;
+                    }
+                }
+                currentPosition +=speed;
+                Thread.sleep(1000);
+            ctr++;
+            }
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+///////////////Server///////////////////
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+
+    public static void main(String[] args) {
+        try {
+            while (true) {
+                ServerSocket serverSocket = new ServerSocket(9090);
+                System.out.println("Server is alive!!!!!");
+                Socket socket = serverSocket.accept();
+                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+                System.out.println((String) input.readObject() + " connected");
+
+                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                Message request;
+                int rand = (int) (Math.random()*2);
+                while (!(request = (Message) input.readObject()).getText().equalsIgnoreCase("exit") ) {
+                    System.out.println(request.getName() + ": " + request.getText());
+                    if(rand == 1) {
+                        output.writeObject(" :Ok!");
+                    } else {
+                        output.writeObject(" "+".....");
+                        System.out.println(rand);
+                    }
+                    rand = (int) (Math.random()*2);
+                }
+                System.out.println((String)input.readObject() + " leave chat");
+                socket.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Message implements Serializable   {
+    private String name;
+    private String text;
+
+    public Message(String name, String text) {
+        this.name = name;
+        this.text = text;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public String getText() {
+        return text;
+    }
+}
+////////Client///////////////////////
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Client {
+    public Client() {
+    }
+
+    private static final String name = "@libek";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            Socket socket = new Socket("127.0.0.1", 9090);
+
+            ObjectOutputStream request = new ObjectOutputStream(socket.getOutputStream());
+            request.writeObject(name);
+
+            ObjectInputStream response = new ObjectInputStream(socket.getInputStream());
+            String text;
+            String line;
+            while (!(text = scanner.next()).equalsIgnoreCase("exit")){
+                request.writeObject(new Message(name,text));
+                System.out.println("Server says" +
+                        response.readObject());
+            }
+            request.writeObject(name);
+            request.close();
+            socket.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+/////
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public  class Main{
+        public  static  void main(String[]args)  {
+            Scanner sc = new Scanner(System.in);
+            ArrayList<Horse>horses = new ArrayList<>();
+            int distance = 2000;
+
+            horses.add(new Horse("Sally",distance,30,0.2));
+            horses.add(new Horse("Sofi",distance,50,0.75));
+            horses.add(new Horse("Malika",distance,40,0.6));
+            horses.add(new Horse("Togzhan",distance,20,0));
+            horses.add(new Horse("Sasha",distance,90,0.95));
+
+
+
+            for(Horse i :horses){
+                i.start();
+            }
+
+            System.out.println("----------------------");
+
+            horses.sort(Comparator.comparing(Horse::getTime));
+
+       for(int i = 1;i<=horses.size();i++){
+        System.out.println("Place "+i + " " + horses.get(i-1).getname() +" "+ horses.get(i-1).getTime()+" seconds");
+     }
+        }
+    }

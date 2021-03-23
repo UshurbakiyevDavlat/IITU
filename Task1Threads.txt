@@ -1,0 +1,82 @@
+///////////////////////////////Main
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public  class Main{
+        public  static  void main(String[]args)  {
+            Scanner sc = new Scanner(System.in);
+            ArrayList<Horse>horses = new ArrayList<>();
+            int dist = 1000;
+
+            horses.add(new Horse("Sally",1000,100,0.1));
+            horses.add(new Horse("Bolly",1000,140,0.2));
+            horses.add(new Horse("Rolly",1000,100,0.3));
+            horses.add(new Horse("Sool",1000,100,0.4));
+            horses.add(new Horse("Mool",1000,100,0.5));
+
+            for(Horse i :horses){
+                i.start();
+            }
+            System.out.println("----------------------");
+
+            horses.sort(Comparator.comparing(Horse::getTime));
+
+       for(int i = 1;i<=3;i++){
+        System.out.println("Place "+i + " " + horses.get(i-1).getname() +" "+ horses.get(i-1).getTime()+" seconds");
+     }
+        }
+    }
+
+
+//////////////Horse.java////////////
+public class Horse extends Thread{
+    String name;
+    int distance;
+    int speed;
+    double slowDown;
+    public  Horse(String name,int distance,int speed,double slowDown){
+        this.name = name;
+        this.distance = distance;
+        this.speed = speed;
+        this.slowDown = slowDown;
+    }
+
+    public String getname(){
+        return name;
+    }
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+    public  int getTime(){
+        return getDistance()/getSpeed();
+    }
+
+    @Override
+    public void run() {
+        int currentPosition = 0;
+        int Milisec = 3000;
+        int ctr=0;
+        try {
+            while(currentPosition<distance){
+                if(ctr == 3)speed *= slowDown;
+                currentPosition +=speed;
+                Thread.sleep(1000);
+            ctr++;
+            }
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+////////////////////////end/////////////////////
