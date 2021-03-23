@@ -1,0 +1,140 @@
+public class SecondTask {
+    public  static void main(String[]args){
+            Picker one = new Picker(0);
+            Courier sec = new Courier(0);
+            int i = 0;
+            int j=0;
+            Picker two = new Picker(100);
+            Courier three = new Courier(200);
+
+
+            while(i<1500) {
+                one.doWork();
+                sec.doWork();
+                i++;
+            }
+            one.bonus();
+            sec.bonus();
+
+            while (j<1500){
+                two.doWork();
+                three.doWork();
+                j++;
+            }
+            two.bonus();
+            three.bonus();
+
+        System.out.println(one.toString());
+        System.out.println(sec.toString());
+        System.out.println(two.toString());
+        System.out.println(three.toString());
+        System.out.println("Orders:"+one.warehouse.getCountOrder());
+        System.out.println("Balance:"+sec.warehouse.getBalance());
+
+
+    }
+}
+/////////////////////////
+public class Courier implements Worker {
+        private int salary;
+        Warehouse warehouse = new Warehouse();
+        public Courier(int salary){
+            this.salary = salary;
+        }
+    public int getSalary() {
+        return salary;
+    }
+
+    @Override
+    public void doWork() {
+            salary+=100;
+      warehouse.setBalance(warehouse.getBalance()+1000);
+
+    }
+
+    @Override
+    public void bonus() {
+        if(warehouse.getBalance()>999999)salary*=2;
+    }
+
+    @Override
+    public String toString() {
+        return "Courier{" +
+                "salary=" + salary +
+                '}';
+    }
+}
+/////////////////////////
+public class Picker  implements Worker{
+    private int salary;
+    Warehouse warehouse = new Warehouse();
+    public Picker(int salary){
+        this.salary = salary;
+    }
+    public int getSalary() {
+        return salary;
+    }
+
+    @Override
+    public void doWork() {
+        salary += 80;
+       warehouse.setCountOrder(warehouse.getCountOrder()+1);
+
+    }
+
+    @Override
+    public void bonus() {
+
+        if(warehouse.getCountOrder()>1499)salary *=3;
+
+    }
+
+    @Override
+    public String toString() {
+        return "Picker{" +
+                "salary=" + salary +
+                '}';
+    }
+}
+//////////////////////
+public class Warehouse {
+    private int countOrder;
+    private int balance;
+
+    public  Warehouse(int countOrder,int balance){
+        this.countOrder = countOrder;
+        this.balance = balance;
+    }
+    public Warehouse(){
+    }
+
+    public int getCountOrder() {
+        return countOrder;
+    }
+
+    public void setCountOrder(int countOrder) {
+        this.countOrder = countOrder;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return
+                 "orders:"+this.getCountOrder() +
+                 " balance:"+this.getBalance()+" "
+                ;
+    }
+}
+////////////////
+public interface Worker {
+    void doWork();
+    void bonus();
+
+}
