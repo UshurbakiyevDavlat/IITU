@@ -1,1 +1,1 @@
-# IITU
+# Training Java skill
